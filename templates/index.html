@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>InterZone | Zero Trust Access Governance</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">IZ</div><div><b>InterZone</b><small>ZERO TRUST PLATFORM</small></div></div>
+    <div class="nav-label">WORKSPACE</div>
+    <a class="nav active" href="#overview">◫ <span>Overview</span></a>
+    <a class="nav" href="#resources">▤ <span>Protected resources</span></a>
+    <a class="nav" href="#requests">⇄ <span>Access requests</span></a>
+    <a class="nav" href="#executive">◇ <span>Executive oversight</span></a>
+    <a class="nav" href="#audit">≡ <span>Audit trail</span></a>
+    <div class="sidebar-bottom"><div class="shield">◆</div><b>Default deny</b><small>Every protected request is checked.</small></div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div><div class="eyebrow">COMPANY SECURITY / CONTROL PLANE</div><h1>Access governance</h1></div>
+      <div class="identity">
+        <div class="avatar" id="avatar">A</div>
+        <div><b id="user-name">Loading...</b><small id="user-role">Loading identity</small></div>
+        <form method="post" action="/switch-user">
+          <select name="username" aria-label="Switch demo identity" onchange="this.form.submit()">
+            {% for u in demo_users %}<option value="{{u[0]}}" {% if me and me.username==u[0] %}selected{% endif %}>{{u[1]}} — {{u[3]}}</option>{% endfor %}
+          </select>
+        </form>
+      </div>
+    </header>
+
+    <section id="overview">
+      <div class="welcome"><div><div class="eyebrow light">SECURITY POSTURE</div><h2>Good day, <span id="first-name">there</span>.</h2><p>Manage access by identity, resource, action and time — not trust by default.</p></div><div class="welcome-icon">◈</div></div>
+      <div class="stats">
+        <div class="stat"><span>Pending requests</span><b id="count-requests">—</b><small>Awaiting approval</small></div>
+        <div class="stat"><span>Active temporary grants</span><b id="count-grants">—</b><small>Time-bound permissions</small></div>
+        <div class="stat"><span>Audit events</span><b id="count-audit">—</b><small>Recorded actions</small></div>
+        <div class="stat"><span>Executive approvals</span><b id="count-exec">—</b><small>Awaiting second approval</small></div>
+      </div>
+    </section>
+
+    <section class="two-col">
+      <div class="panel" id="resources">
+        <div class="panel-head"><div><div class="eyebrow">RESOURCE CATALOG</div><h3>Protected resources</h3></div><span class="pill">Policy enforced</span></div>
+        <p class="muted">Try opening a resource. The backend checks authorization on every request.</p>
+        <div id="resource-list" class="resource-list"></div>
+      </div>
+      <div class="panel" id="request-panel">
+        <div class="panel-head"><div><div class="eyebrow">JUST-IN-TIME ACCESS</div><h3>Request access</h3></div><span class="pill blue">15 / 30 / 60 min</span></div>
+        <label>Destination resource</label><select id="request-resource"></select>
+        <label>Requested action</label><select id="request-action"><option value="read">Read / view</option></select>
+        <label>Business justification</label><textarea id="request-reason" placeholder="Explain why you need this resource..."></textarea>
+        <label>Access duration</label><select id="request-duration"><option>15</option><option>30</option><option>60</option></select>
+        <button class="primary" onclick="submitRequest()">Submit access request</button>
+        <div class="hint">Requests follow manager review, then resource-owner approval.</div>
+      </div>
+    </section>
+
+    <section class="panel" id="requests">
+      <div class="panel-head"><div><div class="eyebrow">APPROVAL WORKFLOW</div><h3>Requests & temporary grants</h3></div><span class="pill">Two-step approval</span></div>
+      <div id="request-list"></div>
+      <div class="subhead">Active / recent grants</div>
+      <div id="grant-list"></div>
+    </section>
+
+    <section class="panel" id="executive">
+      <div class="panel-head"><div><div class="eyebrow">EXECUTIVE OVERSIGHT</div><h3>Company-wide visibility</h3></div><span class="pill purple">Role restricted</span></div>
+      <p class="muted">Executives can see operational summaries and audit activity. Sensitive content still requires a justified request and a second executive's approval.</p>
+      <div class="executive-grid">
+        <div class="exec-card"><b>Owner / CEO</b><span>Company activity, security posture, department summaries</span></div>
+        <div class="exec-card"><b>CTO</b><span>Technical systems, architecture changes and technical risk</span></div>
+        <div class="exec-card"><b>CFO</b><span>Financial reporting and finance-related oversight</span></div>
+      </div>
+      <div class="subhead">Request restricted executive access</div>
+      <div class="inline-form">
+        <select id="exec-resource"></select>
+        <input id="exec-reason" placeholder="Business justification for sensitive access">
+        <button class="primary" onclick="submitExecutiveRequest()">Request access</button>
+      </div>
+      <div id="exec-queue"></div>
+    </section>
+
+    <section class="panel" id="audit">
+      <div class="panel-head"><div><div class="eyebrow">ACCOUNTABILITY</div><h3>Audit trail</h3></div><span class="pill green">Append-only intent</span></div>
+      <p class="muted">Prototype records identity, event, resource, timestamp and context. Production would require tamper-resistant centralized logging.</p>
+      <div id="audit-list"></div>
+    </section>
+    <footer>InterZone Prototype v0.1 · Fictional demo data · Not production-ready</footer>
+  </main>
+</div>
+<div id="toast" class="toast"></div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
